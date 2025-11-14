@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Phiếu Xuất Kho - <%= record.number %></title>
+  <style>
+    body{font-family: Arial, sans-serif; padding:20px}
+    .header{text-align:center;margin-bottom:20px}
+    .items{width:100%;border-collapse:collapse}
+    .items th,.items td{border:1px solid #ddd;padding:8px}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Phiếu Xuất Kho</h1>
+    <div>Số: <strong><%= record.number %></strong></div>
+    <div>Ngày: <%= record.date %></div>
+  </div>
+
+  <table class="items">
+    <thead>
+      <tr><th>#</th><th>Tên hàng</th><th>Số lượng</th></tr>
+    </thead>
+    <tbody>
+      <% (record.items || []).forEach(function(it, idx){ %>
+      <tr>
+        <td><%= idx+1 %></td>
+        <td><%= it.name %></td>
+        <td><%= it.qty %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
