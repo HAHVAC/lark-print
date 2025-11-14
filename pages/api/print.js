@@ -1,4 +1,5 @@
 // pages/api/print.js
+console.log('>>> REQ HEADERS:', JSON.stringify(req.headers));
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import ejs from 'ejs';
