@@ -11,7 +11,21 @@ export const config = {
 
 const TEMPLATE_PATH = join(process.cwd(), 'templates', 'invoice.ejs');
 
+function setCors(res) {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // hoặc theo domain cụ thể
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-api-key');
+}
+
 export default async function handler(req, res) {
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    setCors(res);
+    return res.status(200).end();
+  }
+
+  setCors(res); // set CORS cho response chính
+
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
   const token = process.env.WEBHOOK_TOKEN || '';
@@ -31,7 +45,7 @@ export default async function handler(req, res) {
     const template = readFileSync(TEMPLATE_PATH, 'utf8');
     const html = ejs.render(template, { record });
 
-    const executablePath = await chromium.executablePath || process.env.CHROME_PATH || null;
+    const executablePath = (await chromium.executablePath) || process.env.CHROME_PATH || null;
     const browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
