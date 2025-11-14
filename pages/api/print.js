@@ -12,22 +12,27 @@ export const config = {
 const TEMPLATE_PATH = join(process.cwd(), 'templates', 'invoice.ejs');
 
 function setCors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // hoặc theo domain cụ thể
+  // Nếu muốn giới hạn domain, thay '*' bằng 'https://your-domain.com'
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-api-key');
 }
 
 export default async function handler(req, res) {
-  // CORS preflight
+  // Trả lời preflight ngay lập tức (không check token)
   if (req.method === 'OPTIONS') {
     setCors(res);
     return res.status(200).end();
   }
 
-  setCors(res); // set CORS cho response chính
+  // Gán header CORS cho mọi response chính
+  setCors(res);
 
-  if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
+  if (req.method !== 'POST') {
+    return res.status(405).send('Method Not Allowed');
+  }
 
+  // Kiểm tra token chỉ cho POST
   const token = process.env.WEBHOOK_TOKEN || '';
   const headerToken = req.headers['x-api-key'] || '';
   if (!token || headerToken !== token) {
